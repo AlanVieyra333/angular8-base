@@ -1,10 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { MessagesModule } from 'primeng/messages';
+
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
+
 import { RoutingComponent } from './routing.component';
 import { PublicLayoutComponent } from './public-layout/public-layout.component';
 import { UserLayoutComponent } from './user-layout/user-layout.component';
 import { SharedModule } from '../shared/shared.module';
-import { PageNotFoundComponent } from '../shared';
+import { PageNotFoundComponent, LoaderInterceptor } from '../shared';
 
 
 const routes: Routes = [
@@ -40,8 +46,19 @@ const routes: Routes = [
   ],
   imports: [
     RouterModule.forRoot(routes),
-    SharedModule
+    SharedModule,
+    HttpClientModule,
+    ToastModule,
+    MessagesModule,
   ],
-  exports: [RoutingComponent]
+  exports: [RoutingComponent],
+  providers: [
+    MessageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    }
+  ]
 })
 export class RoutingModule { }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LoaderService } from '../shared';
-import { tick } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-home',
@@ -10,14 +10,24 @@ import { tick } from '@angular/core/testing';
 export class HomeComponent implements OnInit {
   title = 'base';
 
-  constructor(private loaderService: LoaderService) { }
+  constructor(private httpClient: HttpClient, private messageService: MessageService) { }
 
   ngOnInit() {
   }
 
   request() {
-    this.loaderService.show();
-    setTimeout(() => { this.loaderService.hide(); }, 1000);
+    this.httpClient.get('https://api.github.com/users').subscribe(
+      (res: Array<any>) => {
+        console.log('result', res);
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Operación exitosa',
+          detail: res.length + ' registros recibidos',
+          life: 5000,
+        });
+      }
+    );
   }
 
 }
